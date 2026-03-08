@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Icon(Icons.account_balance_wallet,
                   size: 64, color: AppColors.primary),
               const SizedBox(height: 16),
-              const Text('Finanzas App',
+              const Text('Cuentas Claras',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               const Text('Inicia sesion en tu cuenta',

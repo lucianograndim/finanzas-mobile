@@ -19,14 +19,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingPage(
       icon: Icons.account_balance_wallet,
       color: AppColors.primary,
-      title: 'Bienvenido a Finanzas',
+      title: 'Bienvenido a Cuentas Claras',
       description:
           'Lleva el control de tus ingresos y gastos de forma simple y organizada.',
     ),
     _OnboardingPage(
       icon: Icons.group,
       color: Color(0xFF10B981),
-      title: 'Finanzas en Grupo',
+      title: 'Cuentas Claras en Grupo',
       description:
           'Crea un grupo y comparte el codigo con tu pareja, familia o roommates para gestionar las finanzas juntos.',
     ),

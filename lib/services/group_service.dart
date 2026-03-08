@@ -5,25 +5,30 @@ import 'api_client.dart';
 class GroupService {
   static final Dio _dio = ApiClient.instance;
 
-  static Future<({String token, Group group})> createGroup(String name) async {
+  static Future<Group> createGroup(String name) async {
     final response = await _dio.post('/groups', data: {'name': name});
-    return (
-      token: response.data['access_token'] as String,
-      group: Group.fromJson(response.data['group']),
-    );
+    return Group.fromJson(response.data['group']);
   }
 
-  static Future<({String token, Group group})> joinGroup(String code) async {
+  static Future<Group> joinGroup(String code) async {
     final response = await _dio.post('/groups/join', data: {'code': code});
-    return (
-      token: response.data['access_token'] as String,
-      group: Group.fromJson(response.data['group']),
-    );
+    return Group.fromJson(response.data['group']);
   }
 
-  static Future<Group?> getMyGroup() async {
-    final response = await _dio.get('/groups/mine');
-    if (response.data == null) return null;
+  static Future<Group> switchActive(String groupId) async {
+    final response =
+        await _dio.patch('/groups/active', data: {'groupId': groupId});
     return Group.fromJson(response.data);
+  }
+
+  static Future<void> leaveGroup(String groupId) async {
+    await _dio.post('/groups/$groupId/leave');
+  }
+
+  static Future<List<GroupMember>> getGroupMembers(String groupId) async {
+    final response = await _dio.get('/groups/$groupId/members');
+    return (response.data as List)
+        .map((m) => GroupMember.fromJson(m))
+        .toList();
   }
 }

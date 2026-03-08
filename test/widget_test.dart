@@ -3,7 +3,7 @@ import 'package:mobile/app.dart';
 
 void main() {
   testWidgets('App renders', (WidgetTester tester) async {
-    await tester.pumpWidget(const FinanzasApp());
+    await tester.pumpWidget(const CuentasClarasApp());
     await tester.pump();
   });
 }

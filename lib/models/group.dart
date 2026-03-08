@@ -31,13 +31,15 @@ class Group {
 class GroupMember {
   final String name;
   final String email;
+  final String? role;
 
-  GroupMember({required this.name, required this.email});
+  GroupMember({required this.name, required this.email, this.role});
 
   factory GroupMember.fromJson(Map<String, dynamic> json) {
     return GroupMember(
       name: json['name'] ?? '',
       email: json['email'] ?? '',
+      role: json['role'],
     );
   }
 }

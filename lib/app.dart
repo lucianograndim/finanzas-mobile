@@ -12,8 +12,8 @@ import 'screens/main_shell.dart';
 import 'screens/onboarding_screen.dart';
 import 'services/storage_service.dart';
 
-class FinanzasApp extends StatelessWidget {
-  const FinanzasApp({super.key});
+class CuentasClarasApp extends StatelessWidget {
+  const CuentasClarasApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class FinanzasApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CategoriesProvider()),
       ],
       child: MaterialApp(
-        title: 'Finanzas App',
+        title: 'Cuentas Claras',
         theme: appTheme,
         debugShowCheckedModeBanner: false,
         home: const _AuthGate(),
@@ -69,7 +69,7 @@ class _AuthGateState extends State<_AuthGate> {
               const Icon(Icons.account_balance_wallet,
                   size: 64, color: AppColors.primary),
               const SizedBox(height: 16),
-              const Text('Finanzas App',
+              const Text('Cuentas Claras',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
               const CircularProgressIndicator(),
@@ -141,7 +141,7 @@ class _BiometricLockScreenState extends State<_BiometricLockScreen> {
           children: [
             const Icon(Icons.lock, size: 64, color: AppColors.primary),
             const SizedBox(height: 16),
-            const Text('Finanzas App',
+            const Text('Cuentas Claras',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             const Text('Verifica tu identidad para continuar',

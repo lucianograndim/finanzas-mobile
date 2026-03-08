@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../models/group.dart';
+import '../providers/auth_provider.dart';
 import '../services/group_service.dart';
 
 class GroupMembersSheet extends StatefulWidget {
@@ -12,24 +14,33 @@ class GroupMembersSheet extends StatefulWidget {
 }
 
 class _GroupMembersSheetState extends State<GroupMembersSheet> {
-  Group? _group;
+  List<GroupMember>? _members;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadGroup();
+    _loadMembers();
   }
 
-  Future<void> _loadGroup() async {
+  Future<void> _loadMembers() async {
+    final auth = context.read<AuthProvider>();
+    final groupId = auth.user?.activeGroupId;
+    if (groupId == null) {
+      if (mounted) setState(() => _loading = false);
+      return;
+    }
     try {
-      _group = await GroupService.getMyGroup();
+      _members = await GroupService.getGroupMembers(groupId);
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.read<AuthProvider>();
+    final activeGroup = auth.user?.activeGroup;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
@@ -58,11 +69,10 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
               padding: EdgeInsets.all(24),
               child: CircularProgressIndicator(),
             )
-          else if (_group == null)
+          else if (activeGroup == null)
             const Text('No se pudo cargar la informacion',
                 style: TextStyle(color: AppColors.textSecondary))
           else ...[
-            // Group info
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(14),
@@ -78,13 +88,13 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_group!.name,
+                        Text(activeGroup.name,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16)),
                         const SizedBox(height: 2),
                         Row(
                           children: [
-                            Text('Codigo: ${_group!.code}',
+                            Text('Codigo: ${activeGroup.code}',
                                 style: const TextStyle(
                                     fontSize: 13,
                                     color: AppColors.textSecondary)),
@@ -92,7 +102,7 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                             GestureDetector(
                               onTap: () {
                                 Clipboard.setData(
-                                    ClipboardData(text: _group!.code));
+                                    ClipboardData(text: activeGroup.code));
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Codigo copiado'),
@@ -112,9 +122,8 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
               ),
             ),
             const SizedBox(height: 16),
-            // Members list
-            if (_group!.members != null && _group!.members!.isNotEmpty)
-              ...(_group!.members!.map((m) => Padding(
+            if (_members != null && _members!.isNotEmpty)
+              ...(_members!.map((m) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     child: Row(
                       children: [
@@ -146,8 +155,7 @@ class _GroupMembersSheetState extends State<GroupMembersSheet> {
                             ],
                           ),
                         ),
-                        if (m.email == _group!.ownerId ||
-                            _group!.members!.indexOf(m) == 0)
+                        if (m.role == 'owner')
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 2),

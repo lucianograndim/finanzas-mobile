@@ -23,6 +23,10 @@ class ApiClient {
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+        final groupId = await StorageService.getActiveGroupId();
+        if (groupId != null) {
+          options.headers['X-Group-Id'] = groupId;
+        }
         handler.next(options);
       },
       onError: (error, handler) async {

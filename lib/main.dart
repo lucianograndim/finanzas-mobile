@@ -5,5 +5,5 @@ import 'app.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ApiClient.init();
-  runApp(const FinanzasApp());
+  runApp(const CuentasClarasApp());
 }

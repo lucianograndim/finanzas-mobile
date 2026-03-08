@@ -47,11 +47,15 @@ class AuthProvider extends ChangeNotifier {
     if (token != null) {
       try {
         _user = await AuthService.getMe();
+        if (_user?.activeGroupId != null) {
+          await StorageService.setActiveGroupId(_user!.activeGroupId!);
+        }
         if (!_biometricEnabled) {
           _biometricPassed = true;
         }
       } catch (_) {
         await StorageService.deleteToken();
+        await StorageService.deleteActiveGroupId();
         _user = null;
       }
     }
@@ -63,7 +67,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> authenticateBiometric() async {
     try {
       final didAuth = await _localAuth.authenticate(
-        localizedReason: 'Desbloquea Finanzas App',
+        localizedReason: 'Desbloquea Cuentas Claras',
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: false,
@@ -100,6 +104,9 @@ class AuthProvider extends ChangeNotifier {
     final result = await AuthService.login(email, password);
     await StorageService.setToken(result.token);
     _user = result.user;
+    if (_user?.activeGroupId != null) {
+      await StorageService.setActiveGroupId(_user!.activeGroupId!);
+    }
     _biometricPassed = true;
     notifyListeners();
   }
@@ -113,21 +120,44 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> createGroup(String name) async {
-    final result = await GroupService.createGroup(name);
-    await StorageService.setToken(result.token);
+    await GroupService.createGroup(name);
     _user = await AuthService.getMe();
+    if (_user?.activeGroupId != null) {
+      await StorageService.setActiveGroupId(_user!.activeGroupId!);
+    }
     notifyListeners();
   }
 
   Future<void> joinGroup(String code) async {
-    final result = await GroupService.joinGroup(code);
-    await StorageService.setToken(result.token);
+    await GroupService.joinGroup(code);
     _user = await AuthService.getMe();
+    if (_user?.activeGroupId != null) {
+      await StorageService.setActiveGroupId(_user!.activeGroupId!);
+    }
+    notifyListeners();
+  }
+
+  Future<void> switchGroup(String groupId) async {
+    await GroupService.switchActive(groupId);
+    await StorageService.setActiveGroupId(groupId);
+    _user = await AuthService.getMe();
+    notifyListeners();
+  }
+
+  Future<void> leaveGroup(String groupId) async {
+    await GroupService.leaveGroup(groupId);
+    _user = await AuthService.getMe();
+    if (_user?.activeGroupId != null) {
+      await StorageService.setActiveGroupId(_user!.activeGroupId!);
+    } else {
+      await StorageService.deleteActiveGroupId();
+    }
     notifyListeners();
   }
 
   Future<void> logout() async {
     await StorageService.deleteToken();
+    await StorageService.deleteActiveGroupId();
     _user = null;
     _biometricPassed = false;
     notifyListeners();

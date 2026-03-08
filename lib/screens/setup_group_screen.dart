@@ -64,6 +64,9 @@ class _SetupGroupScreenState extends State<SetupGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final hasGroups = auth.user?.groups.isNotEmpty ?? false;
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -73,8 +76,9 @@ class _SetupGroupScreenState extends State<SetupGroupScreen> {
             children: [
               const Icon(Icons.group, size: 64, color: AppColors.primary),
               const SizedBox(height: 16),
-              const Text('Configurar Grupo',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              Text(hasGroups ? 'Agregar Grupo' : 'Configurar Grupo',
+                  style: const TextStyle(
+                      fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               const Text(
                 'Crea un grupo nuevo o unite a uno existente con un codigo',
@@ -196,11 +200,12 @@ class _SetupGroupScreenState extends State<SetupGroupScreen> {
                 ),
               ],
               const SizedBox(height: 24),
-              TextButton(
-                onPressed: () => context.read<AuthProvider>().logout(),
-                child: const Text('Cerrar sesion',
-                    style: TextStyle(color: AppColors.textSecondary)),
-              ),
+              if (!hasGroups)
+                TextButton(
+                  onPressed: () => context.read<AuthProvider>().logout(),
+                  child: const Text('Cerrar sesion',
+                      style: TextStyle(color: AppColors.textSecondary)),
+                ),
             ],
           ),
         ),
