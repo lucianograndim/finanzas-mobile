@@ -15,11 +15,11 @@ class GroupInfo {
 
   factory GroupInfo.fromJson(Map<String, dynamic> json) {
     return GroupInfo(
-      id: json['_id'] ?? '',
-      name: json['name'] ?? '',
-      code: json['code'] ?? '',
-      role: json['role'] ?? 'member',
-      isActive: json['isActive'] ?? false,
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      code: json['code']?.toString() ?? '',
+      role: json['role']?.toString() ?? 'member',
+      isActive: json['isActive'] == true,
     );
   }
 }
@@ -41,12 +41,13 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      activeGroupId: json['activeGroupId'],
-      activeGroupName: json['activeGroupName'],
-      groups: json['groups'] != null
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      activeGroupId: json['activeGroupId']?.toString(),
+      activeGroupName: json['activeGroupName']?.toString(),
+      groups: json['groups'] is List
           ? (json['groups'] as List)
+              .whereType<Map<String, dynamic>>()
               .map((g) => GroupInfo.fromJson(g))
               .toList()
           : [],

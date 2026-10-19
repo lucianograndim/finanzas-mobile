@@ -11,9 +11,10 @@ class AuthService {
       'email': email,
       'password': password,
     });
+    final data = response.data as Map<String, dynamic>;
     return (
-      token: response.data['access_token'] as String,
-      user: User.fromJson(response.data['user']),
+      token: (data['access_token'] ?? '') as String,
+      user: User.fromJson(data['user'] as Map<String, dynamic>),
     );
   }
 
@@ -24,14 +25,15 @@ class AuthService {
       'email': email,
       'password': password,
     });
+    final data = response.data as Map<String, dynamic>;
     return (
-      token: response.data['access_token'] as String,
-      user: User.fromJson(response.data['user']),
+      token: (data['access_token'] ?? '') as String,
+      user: User.fromJson(data['user'] as Map<String, dynamic>),
     );
   }
 
   static Future<User> getMe() async {
     final response = await _dio.get('/auth/me');
-    return User.fromJson(response.data);
+    return User.fromJson(response.data as Map<String, dynamic>);
   }
 }

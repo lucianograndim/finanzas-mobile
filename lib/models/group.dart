@@ -15,12 +15,13 @@ class Group {
 
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
-      id: json['_id'] ?? '',
-      name: json['name'] ?? '',
-      code: json['code'] ?? '',
-      ownerId: json['ownerId'] ?? '',
-      members: json['members'] != null
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      code: json['code']?.toString() ?? '',
+      ownerId: json['ownerId']?.toString() ?? '',
+      members: json['members'] is List
           ? (json['members'] as List)
+              .whereType<Map<String, dynamic>>()
               .map((m) => GroupMember.fromJson(m))
               .toList()
           : null,
@@ -37,9 +38,9 @@ class GroupMember {
 
   factory GroupMember.fromJson(Map<String, dynamic> json) {
     return GroupMember(
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      role: json['role'],
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      role: json['role']?.toString(),
     );
   }
 }
